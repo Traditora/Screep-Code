@@ -1,0 +1,52 @@
+var rolefab = {
+
+    /** @param {Creep} creep **/
+    run: function(creep) {
+
+      
+        if (creep.memory.building && creep.store[RESOURCE_ENERGY] == 0) {
+            creep.memory.building = false;
+            creep.say('🔄 withdraw');
+        }
+        // Switch to build mode if full
+        if (!creep.memory.building && creep.store.getFreeCapacity() == 0) {
+            creep.memory.building = true;
+            creep.say('🚧 fab');
+        }
+
+        if (creep.memory.building) {
+            // Priority 1: Find damaged structures to repair
+            var repairTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                filter: (structure) =>
+                    structure.hits < structure.hitsMax &&
+                    structure.structureType != STRUCTURE_WALL
+            });
+
+            if (repairTarget) {
+                // If a repair target is found, move to repair it
+                if (creep.repair(repairTarget) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(repairTarget, { visualizePathStyle: { stroke: '#b6ff00' } });
+                }
+            } else {
+                // Priority 2: If nothing to repair, find construction sites
+                var buildTarget = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
+                if (buildTarget) {
+                    if (creep.build(buildTarget) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(buildTarget, { visualizePathStyle: { stroke: '#ffffff' } });
+                    }
+                }
+            }
+        } else {
+            // Withdraw logic remains the same
+            var spawn = creep.room.lookForAt(LOOK_STRUCTURES, 22, 14)
+                .find(s => s.structureType == STRUCTURE_SPAWN);
+            if (spawn) {
+                if (creep.withdraw(spawn, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(spawn, { visualizePathStyle: { stroke: '#ffaa00' } });
+                }
+            }
+        }
+    }
+};
+
+module.exports = rolefab;
