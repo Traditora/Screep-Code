@@ -20,19 +20,14 @@ var roleupt = {
             }
         } 
         else {
-            // Find the closest structure that has energy
-            var source = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-                filter: (s) => (s.structureType == STRUCTURE_SPAWN ||
-                                s.structureType == STRUCTURE_CONTAINER ||
-                                s.structureType == STRUCTURE_STORAGE) &&
-                                s.store.getUsedCapacity(RESOURCE_ENERGY) > 0
-            });
-            
-            // If a valid source is found, withdraw from it
-            if (source) {
-                if (creep.withdraw(source, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.travelTo(source, { visualizePathStyle: { stroke: '#ffaa00' } });
+            // Only withdraw from the specified storage container
+            const container = Game.getObjectById('688a4ee285e8d700124d014c');
+            if (container && container.store[RESOURCE_ENERGY] > 0) {
+                if (creep.withdraw(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    creep.travelTo(container, { visualizePathStyle: { stroke: '#ffaa00' } });
                 }
+            } else {
+                creep.say('⚠️ No Energy!');
             }
         }
     }

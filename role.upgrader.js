@@ -15,8 +15,12 @@ var roleUpgrader = {
 
         // If the creep's state is 'upgrading'
         if(creep.memory.upgrading) {
-            if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(creep.room.controller, {visualizePathStyle: {stroke: '#ffffff'}});
+            // Deposit energy directly to the specified container
+            const container = Game.getObjectById('688a479d99c22d1607ccd0a0');
+            if (container && creep.store[RESOURCE_ENERGY] > 0) {
+                if (creep.transfer(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(container, {visualizePathStyle: {stroke: '#ffffff'}});
+                }
             }
         }
         // If the creep's state is 'harvesting'
