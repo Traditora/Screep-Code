@@ -60,8 +60,8 @@ var roleHaul = {
             // Withdraw from containers in priority order, then storage
             let energySource = null;
             const containers = [
+                Game.getObjectById('688a609d889231db34f9795f'),
                 Game.getObjectById('688a25d22211de0c59dce788'),
-                Game.getObjectById('688a3a815d82914a6bac7f0b'),
                 Game.getObjectById('688a36c84ee3e64fb9f3cde8')
             ];
             for (const container of containers) {

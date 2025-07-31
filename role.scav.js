@@ -9,6 +9,11 @@ var rolescav = {
     /** @param {Creep} creep **/
     run: function(creep) {
 
+        // --- Secondary: Move energy from link to container if available ---
+        if (rolescav.linkToContainer(creep)) {
+            return;
+        }
+
         // --- State Machine ---
         // If collecting and now full, switch to depositing.
         if (creep.memory.collecting && creep.store.getFreeCapacity() == 0) {
@@ -85,6 +90,31 @@ var rolescav = {
                 creep.say('no deposit');
             }
         }
+    },
+
+    // --- Secondary function: Move energy from link to container ---
+    linkToContainer: function(creep) {
+        const link = Game.getObjectById('688a609d889231db34f9795f');
+        const container = Game.getObjectById('688a25d22211de0c59dce788');
+        if (
+            link &&
+            link.store[RESOURCE_ENERGY] > 0 &&
+            creep.store.getUsedCapacity() == 0 &&
+            container &&
+            container.store.getFreeCapacity(RESOURCE_ENERGY) > 0
+        ) {
+            // Withdraw from link
+            if (creep.withdraw(link, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(link, { visualizePathStyle: { stroke: '#00ff00' } });
+            } else {
+                // After withdrawing, deposit into the container
+                if (creep.transfer(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(container, { visualizePathStyle: { stroke: '#ffaa00' } });
+                }
+            }
+            return true;
+        }
+        return false;
     }
 };
 

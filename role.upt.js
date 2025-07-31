@@ -21,7 +21,7 @@ var roleupt = {
         } 
         else {
             // Only withdraw from the specified storage container
-            const container = Game.getObjectById('688a4ee285e8d700124d014c');
+            const container = Game.getObjectById('688a53c490b4976fc919b719');
             if (container && container.store[RESOURCE_ENERGY] > 0) {
                 if (creep.withdraw(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.travelTo(container, { visualizePathStyle: { stroke: '#ffaa00' } });

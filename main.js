@@ -9,8 +9,11 @@ const roleh2 = require('role.h2');
 const roleh3 = require('role.h3');
 const rolescav = require('role.scav');
 const roleh4 = require('role.h4');
+const roleh5 = require('role.h5');
+const roleh6 = require('role.h6'); // <-- ADDED
+const roleh7 = require('role.h7'); // <-- ADDED
 const roleHaul = require('role.haul');
-const roleeff = require('role.eff'); // <-- Add this line
+const roleeff = require('role.eff'); 
 
 // 2. Simply require the Traveler file. It sets itself up automatically.
 require('Traveler');
@@ -36,75 +39,93 @@ module.exports.loop = function () {
     const fabs = _.filter(Game.creeps, (c) => c.memory.role == 'fab');
     const fab2s = _.filter(Game.creeps, (c) => c.memory.role == 'fab2');
     const upts = _.filter(Game.creeps, (c) => c.memory.role == 'upt');
-    const h4s = _.filter(Game.creeps, (c) => c.memory.role == 'h4');    
-    const scavs = _.filter(Game.creeps, (c) => c.memory.role == 'scav');     
-    const effs = _.filter(Game.creeps, (c) => c.memory.role == 'eff'); // <-- Add this line
+    const h4s = _.filter(Game.creeps, (c) => c.memory.role == 'h4');     
+    const scavs = _.filter(Game.creeps, (c) => c.memory.role == 'scav'); 
+    const h5s = _.filter(Game.creeps, (c) => c.memory.role == 'h5');
+    const h6s = _.filter(Game.creeps, (c) => c.memory.role == 'h6'); // <-- ADDED
+    const h7s = _.filter(Game.creeps, (c) => c.memory.role == 'h7'); // <-- ADDED
+    const effs = _.filter(Game.creeps, (c) => c.memory.role == 'eff');
 
     // --- ADDED: Console log for creep counts ---
-    console.log(`Roles: H:${harvesters.length}, Haul:${hauls.length}, H2:${h2s.length}, H3:${h3s.length}, H4:${h4s.length}, U:${upgraders.length}, B:${builders.length}, F:${fabs.length}, S:${scavs.length}, UPT:${upts.length}`);
+    console.log(`Roles: H:${harvesters.length}, Haul:${hauls.length}, H2:${h2s.length}, H3:${h3s.length}, H4:${h4s.length}, H5:${h5s.length}, H6:${h6s.length}, H7:${h7s.length}, U:${upgraders.length}, B:${builders.length}, F:${fabs.length}, S:${scavs.length}, UPT:${upts.length}`);
     console.log(`Total Creeps: ${Object.keys(Game.creeps).length}`);
 
 
     // --- Tiered Spawning Logic ---
     // The 'else if' structure creates a priority queue.
     // It will only try to spawn a creep if all the tiers above it are full.
-    if (harvesters.length < 2) {
-        // PRIORITY 1: Harvesters
-        Game.spawns['S1'].spawnCreep([WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE], 'Harvester' + Game.time,
-            { memory: { role: 'harvester' } });
-    }
-    else if (hauls.length < 2) {
-        // PRIORITY 2: Haulers
+    if (hauls.length < 2) {
+        // PRIORITY 1: Haulers
         Game.spawns['S1'].spawnCreep([CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], 'Haul' + Game.time,
             { memory: { role: 'haul' } });
     }
-    else if (h2s.length < 3) {
-        // PRIORITY 3: h2 (Remote Harvesters)
-        Game.spawns['S1'].spawnCreep([WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE], 'Inv' + Game.time,
-            { memory: { role: 'h2' } });
-    }
-    else if (h3s.length < 5) {
-        // PRIORITY 4: h3 (Remote Harvesters)
-        Game.spawns['S1'].spawnCreep([WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE], 'Inv' + Game.time,
-            { memory: { role: 'h3' } });
-    }
-    else if (h4s.length < 3) {
-        // PRIORITY 5: h4 (Remote Harvesters)
-        Game.spawns['S1'].spawnCreep([WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE], 'Inv' + Game.time,
-            { memory: { role: 'h4' } });
+    else if (harvesters.length < 2) {
+        // PRIORITY 2: Harvesters
+        Game.spawns['S1'].spawnCreep([WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE], 'Harvester' + Game.time,
+            { memory: { role: 'harvester' } });
     }
     else if (upgraders.length < 2) {
-        // PRIORITY 6: Upgraders
+        // PRIORITY 3: Upgraders
         Game.spawns['S1'].spawnCreep([WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE, MOVE], 'Upgrader' + Game.time,
             { memory: { role: 'upgrader' } });
     }
-    else if (effs.length < 2) {
-        // PRIORITY 7: Eff hauler
+    else if (effs.length < 3) {
+        // PRIORITY 4: Eff hauler
         Game.spawns['S1'].spawnCreep([CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE], 'Eff' + Game.time,
             { memory: { role: 'eff' } });
     }
     else if (fabs.length < 1) {
-        // PRIORITY 8: Fabs
+        // PRIORITY 5: Fabs
         Game.spawns['S1'].spawnCreep([WORK, CARRY, CARRY, MOVE, MOVE], 'Fab' + Game.time,
             { memory: { role: 'fab' } });
     }
     else if (fab2s.length < 1) {
-        // PRIORITY 9: Fab2s
+        // PRIORITY 6: Fab2s
         Game.spawns['S1'].spawnCreep([WORK, CARRY, CARRY, MOVE, MOVE], 'Fa2' + Game.time,
             { memory: { role: 'fab2' } });
     }
     else if (scavs.length < 1) {
-        // PRIORITY 10: Scavs
+        // PRIORITY 7: Scavs
         Game.spawns['S1'].spawnCreep([WORK, CARRY, CARRY, MOVE, MOVE], 'Scav' + Game.time,
             { memory: { role: 'scav' } });
     }
-    else if (upts.length < 0) {
-        // PRIORITY 11: Upts
-        Game.spawns['S1'].spawnCreep([WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], 'Upt' + Game.time,
+    else if (h2s.length < 3) {
+        // PRIORITY 8: h2 (Remote Harvesters)
+        Game.spawns['S1'].spawnCreep([WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE], 'Inv' + Game.time,
+            { memory: { role: 'h2' } });
+    }
+    else if (h3s.length < 5) {
+        // PRIORITY 9: h3 (Remote Harvesters)
+        Game.spawns['S1'].spawnCreep([WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE], 'Inv' + Game.time,
+            { memory: { role: 'h3' } });
+    }
+    else if (h4s.length < 3) {
+        // PRIORITY 10: h4 (Remote Harvesters)
+        Game.spawns['S1'].spawnCreep([WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE], 'Inv' + Game.time,
+            { memory: { role: 'h4' } });
+    }
+    else if (h5s.length < 0) {
+        // PRIORITY 11: h5 (Remote Harvesters)
+        Game.spawns['S1'].spawnCreep([WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE], 'Inv' + Game.time,
+            { memory: { role: 'h5' } });
+    }
+    else if (h6s.length < 5) { // <-- ADDED
+        // PRIORITY 12: h5 (Remote Harvesters)
+        Game.spawns['S1'].spawnCreep([WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE], 'Inv' + Game.time,
+            { memory: { role: 'h6' } });
+    }
+    else if (h7s.length < 5) { // <-- ADDED
+        // PRIORITY 13: h7 (Remote Harvesters)
+        Game.spawns['S1'].spawnCreep([WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE], 'Inv' + Game.time,
+            { memory: { role: 'h7' } });
+    }
+    else if (upts.length < 4) {
+        // PRIORITY 14: Upts
+        Game.spawns['S1'].spawnCreep([WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE, MOVE], 'Upt' + Game.time,
             { memory: { role: 'upt' } });
     }
-    else if (builders.length < 3) {
-        // PRIORITY 12: Builders
+    else if (builders.length < 1) {
+        // PRIORITY 15: Builders
         Game.spawns['S1'].spawnCreep([WORK, WORK, WORK, CARRY, CARRY , CARRY, CARRY, MOVE, MOVE, MOVE, MOVE], 'Builder' + Game.time,
             { memory: { role: 'builder' } });
     }
@@ -159,6 +180,22 @@ module.exports.loop = function () {
         else if (creep.memory.role == 'eff') {
             roleeff.run(creep);
         }
-    } // <-- This brace closes the 'for' loop for creep logic.
+        else if (creep.memory.role == 'h5') {
+            roleh5.run(creep);
+        }
+        else if (creep.memory.role == 'h6') { // <-- ADDED
+            roleh6.run(creep);
+        }
+        else if (creep.memory.role == 'h7') { // <-- ADDED
+            roleh7.run(creep);
+        }
+    } // <-- End creep logic loop
 
-} // <-- This brace closes the 'module.exports.loop' function. The error often happens if one of these is missing.
+    // --- Link Transfer Logic ---
+    const sourceLink = Game.getObjectById('688a4f1d533a4abbdec23b97');
+    const destLink = Game.getObjectById('688a609d889231db34f9795f');
+    if (sourceLink && destLink && sourceLink.cooldown === 0 && sourceLink.store[RESOURCE_ENERGY] > 0) {
+        sourceLink.transferEnergy(destLink);
+    }
+
+} // <-- End module.exports.loop

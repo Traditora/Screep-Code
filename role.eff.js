@@ -21,8 +21,8 @@ var roleeff = {
         if (creep.memory.hauling) {
             // Deposit in containers by priority
             const depositContainers = [
-                Game.getObjectById('688a4f1d533a4abbdec23b97'),
                 Game.getObjectById('688a53c490b4976fc919b719'),
+                Game.getObjectById('688a4f1d533a4abbdec23b97'),
                 Game.getObjectById('688a25d22211de0c59dce788')
             ];
             let deposited = false;
